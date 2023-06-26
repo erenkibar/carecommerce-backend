@@ -5,13 +5,11 @@ import com.eren.carecommerce.request.RegisterRequest;
 import com.eren.carecommerce.response.AuthenticationResponse;
 import com.eren.carecommerce.service.AuthenticationService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*")
 public class AuthenticationController {
 
     private final AuthenticationService service;
