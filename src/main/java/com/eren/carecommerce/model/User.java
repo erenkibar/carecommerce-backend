@@ -29,6 +29,9 @@ public class User implements UserDetails {
 
     private String password;
 
+    @OneToMany
+    private List<Car> cars;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
