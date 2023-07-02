@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 
 @Data
@@ -17,6 +18,10 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @ElementCollection
+    @Column(columnDefinition = "bytea")
+    private List<byte[]> images;
 
     private String year;
 
@@ -31,6 +36,12 @@ public class Car {
     private FuelType fuelType;
 
     private TransmissionType transmissionType;
+
+    private NumberOfDoors numberOfDoors;
+
+    private Color color;
+
+    private String engineSize;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;

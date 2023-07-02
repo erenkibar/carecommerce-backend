@@ -9,7 +9,7 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     Car findCarById(Long id);
 
-    List<Car> findCarsByUserId(Long userId);
+    List<Car> findCarsByUserId(String userID);
 
-    Car deleteCarById(Long id);
+    Car deleteCarById(Long carID);
 }

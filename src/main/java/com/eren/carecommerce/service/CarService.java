@@ -9,7 +9,10 @@ import com.eren.carecommerce.request.CarRequest;
 import com.eren.carecommerce.response.CarResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CarService {
@@ -28,20 +31,28 @@ public class CarService {
     }
 
     //Add a car
-    public Car saveCar(CarRequest carRequest){
-        User user = userRepository.getReferenceById(Long.parseLong(carRequest.getUserID()));
+    public Car saveCar(CarRequest carRequest, String email){
+        String partSeparator = ",";
+
+        Optional<User> user = userRepository.findUserByEmail(email);
         Brand brand = brandRepository.getReferenceById(Long.parseLong(carRequest.getBrandID()));
         Model model = modelRepository.getReferenceById(Long.parseLong(carRequest.getModelID()));
 
+        List<byte[]> imageBytes = carRequest.getImages().stream()
+                .map(Base64.getDecoder()::decode)
+                .collect(Collectors.toList());
+
         var car = Car.builder()
                 .year(carRequest.getYear())
+                .images(imageBytes)
                 .mileage(carRequest.getMileage())
                 .price(carRequest.getPrice())
                 .title(carRequest.getTitle())
                 .description(carRequest.getDescription())
                 .fuelType(FuelType.valueOf(carRequest.getFuelType()))
                 .transmissionType(TransmissionType.valueOf(carRequest.getTransmissionType()))
-                .user(user)
+                .color(Color.valueOf(carRequest.getColor()))
+                .user(user.get())
                 .model(model)
                 .brand(brand)
                 .build();
@@ -49,9 +60,9 @@ public class CarService {
     }
 
     //Delete a car
-    public void deleteCar(String id){
-        Long carID = Long.parseLong(id);
-        carRepository.deleteCarById(carID);
+    public void deleteCarById(String carID){
+        Long cID = Long.parseLong(carID);
+        carRepository.deleteCarById(cID);
     }
 
 
@@ -59,16 +70,21 @@ public class CarService {
     public CarResponse getCarById(String carID){
         Long cID = Long.parseLong(carID);
         var car = carRepository.findCarById(cID);
+        List<String> base64 = car.getImages().stream()
+                .map(Base64.getEncoder()::encodeToString)
+                .collect(Collectors.toList());
         return CarResponse.builder()
                 .year(car.getYear())
+                .images(base64)
                 .mileage(car.getMileage())
-                .brand(String.valueOf(car.getBrand()))
-                .model(String.valueOf(car.getModel()))
                 .description(car.getDescription())
                 .title(car.getTitle())
                 .price(car.getPrice())
                 .fuelType(String.valueOf(car.getFuelType()))
                 .transmissionType(String.valueOf(car.getTransmissionType()))
+                .color(String.valueOf(car.getColor()))
+                .numberOfDoors(String.valueOf(car.getNumberOfDoors()))
+                .engineSize(car.getEngineSize())
                 .firstName(car.getUser().getFirstName())
                 .lastName(car.getUser().getLastName())
                 .brand(car.getBrand().getName())
@@ -77,8 +93,8 @@ public class CarService {
     }
 
     //Get all cars of a given user
-    public List<Car> getAllCarsByUserId(String userId){
-        Long uID = Long.parseLong(userId);
-        return carRepository.findCarsByUserId(uID);
+    public List<Car> getAllCarsByUserEmail(String username){
+        Optional<User> user = userRepository.findUserByEmail(username);
+        return carRepository.findCarsByUserId(user.get().getId());
     }
 }
