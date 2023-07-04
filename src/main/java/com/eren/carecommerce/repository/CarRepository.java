@@ -11,5 +11,7 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     List<Car> findCarsByUserId(String userID);
 
-    Car deleteCarById(Long carID);
+    void deleteCarByIdAndUserId(Long carID, String userID);
+
+    List<Car> findFirst10ByOrderByCreatedAtDesc();
 }

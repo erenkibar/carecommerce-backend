@@ -7,9 +7,11 @@ import com.eren.carecommerce.repository.ModelRepository;
 import com.eren.carecommerce.repository.UserRepository;
 import com.eren.carecommerce.request.CarRequest;
 import com.eren.carecommerce.response.CarResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,14 +57,19 @@ public class CarService {
                 .user(user.get())
                 .model(model)
                 .brand(brand)
+                .createdAt(new Date())
                 .build();
         return carRepository.save(car);
     }
 
     //Delete a car
-    public void deleteCarById(String carID){
+    @Transactional
+    public void deleteCarById(String carID, String email){
+        Optional<User> user = userRepository.findUserByEmail(email);
+
         Long cID = Long.parseLong(carID);
-        carRepository.deleteCarById(cID);
+        carRepository.deleteCarByIdAndUserId(cID, user.get().getId());
+
     }
 
 
@@ -96,5 +103,10 @@ public class CarService {
     public List<Car> getAllCarsByUserEmail(String username){
         Optional<User> user = userRepository.findUserByEmail(username);
         return carRepository.findCarsByUserId(user.get().getId());
+    }
+
+    //Get latest cars
+    public List<Car> getLatestCars() {
+        return carRepository.findFirst10ByOrderByCreatedAtDesc();
     }
 }

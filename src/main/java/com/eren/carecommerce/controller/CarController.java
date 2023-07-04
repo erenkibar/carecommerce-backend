@@ -1,7 +1,6 @@
 package com.eren.carecommerce.controller;
 
 import com.eren.carecommerce.model.Car;
-import com.eren.carecommerce.model.User;
 import com.eren.carecommerce.request.CarRequest;
 import com.eren.carecommerce.response.CarResponse;
 import com.eren.carecommerce.service.CarService;
@@ -40,12 +39,15 @@ public class CarController {
         }
     }
 
+    @GetMapping("/latest")
+    public List<Car> getLatestCars() {
+        List<Car> carList = service.getLatestCars();
+        return carList;
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Car> createCar (@RequestBody CarRequest car){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-
-        System.out.println(car.toString());
         Car savedCar = service.saveCar(car, userDetails.getUsername());
         if(savedCar != null) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -56,7 +58,8 @@ public class CarController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCar(@PathVariable String id){
-        service.deleteCarById(id);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        service.deleteCarById(id, userDetails.getUsername());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
