@@ -53,9 +53,11 @@ public class Car {
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id", insertable = false, updatable = false)
     private Brand brand;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id", insertable = false, updatable = false)
     private Model model;
 
 

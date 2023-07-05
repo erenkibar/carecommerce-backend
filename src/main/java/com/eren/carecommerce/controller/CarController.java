@@ -1,7 +1,10 @@
 package com.eren.carecommerce.controller;
 
+import com.eren.carecommerce.dto.CarSearchDto;
 import com.eren.carecommerce.model.Car;
+import com.eren.carecommerce.model.CarSpecificationBuilder;
 import com.eren.carecommerce.request.CarRequest;
+import com.eren.carecommerce.request.SearchCriteria;
 import com.eren.carecommerce.response.CarResponse;
 import com.eren.carecommerce.service.CarService;
 import org.springframework.http.HttpStatus;
@@ -62,5 +65,27 @@ public class CarController {
         service.deleteCarById(id, userDetails.getUsername());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<Car>> searchAndFilterCars(@RequestBody CarSearchDto carDto){
+        CarSpecificationBuilder builder = new CarSpecificationBuilder();
+        List<SearchCriteria> criteriaList = carDto.getSearchCriteriaList();
+
+        if(criteriaList != null){
+            criteriaList.forEach(x->
+            {x.setDataOption(carDto.getDataOption());
+                builder.with(x);
+            });
+        }
+
+        List<Car> carList = service.findBySearchCriteria(builder.build());
+
+        return new ResponseEntity<>(carList, HttpStatus.OK);
+
+
+
+    }
+
+
 
 }

@@ -8,6 +8,7 @@ import com.eren.carecommerce.repository.UserRepository;
 import com.eren.carecommerce.request.CarRequest;
 import com.eren.carecommerce.response.CarResponse;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
@@ -108,5 +109,10 @@ public class CarService {
     //Get latest cars
     public List<Car> getLatestCars() {
         return carRepository.findFirst10ByOrderByCreatedAtDesc();
+    }
+
+    public List<Car> findBySearchCriteria(Specification<Car> spec) {
+        List<Car> searchResult = carRepository.findAll(spec);
+        return searchResult;
     }
 }
