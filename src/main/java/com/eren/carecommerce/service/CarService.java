@@ -56,6 +56,7 @@ public class CarService {
                 .transmissionType(TransmissionType.valueOf(carRequest.getTransmissionType()))
                 .color(Color.valueOf(carRequest.getColor()))
                 .user(user.get())
+                .numberOfDoors(NumberOfDoors.valueOfLabel(carRequest.getNumberOfDoors().toString()))
                 .model(model)
                 .brand(brand)
                 .createdAt(new Date())
