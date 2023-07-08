@@ -1,5 +1,6 @@
 package com.eren.carecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,11 +26,17 @@ public class User implements UserDetails {
 
     private String lastName;
 
+    @Column(unique = true)
     private String email;
 
     private String password;
 
-    @OneToMany
+    private String phone;
+
+    private Boolean checked;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,  orphanRemoval = true)
     private List<Car> cars;
 
     @Enumerated(EnumType.STRING)
@@ -39,6 +46,10 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
+
+    public String getPhone(){ return phone; }
+
+    public Boolean getChecked() { return checked; }
 
     @Override
     public String getPassword() {

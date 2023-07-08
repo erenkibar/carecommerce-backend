@@ -116,4 +116,15 @@ public class CarService {
         List<Car> searchResult = carRepository.findAll(spec);
         return searchResult;
     }
+
+    public List<Car> getAllCars() {
+        List<Car> carList = carRepository.findAll();
+        return carList;
+    }
+
+    @Transactional
+    public void deleteCar(String id){
+        Long cID = Long.parseLong(id);
+        carRepository.deleteCarById(cID);
+    }
 }
